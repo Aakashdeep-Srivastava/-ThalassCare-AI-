@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   BookOpen,
@@ -97,7 +97,7 @@ export default function Learn() {
         const categoryColor = getCategoryColor(article.category);
 
         return (
-          <Pressable key={article.id} style={styles.articleCard}>
+          <Pressable key={article.id} style={styles.articleCard} onPress={() => Alert.alert(article.title, article.content)}>
             <View style={[styles.articleIcon, { backgroundColor: categoryColor + '15' }]}>
               <CategoryIcon size={24} color={categoryColor} />
             </View>
@@ -133,7 +133,7 @@ export default function Learn() {
           { label: 'Lab Results Log', icon: BookOpen, color: '#3B82F6' },
           { label: 'Dietary Guide', icon: Utensils, color: '#F59E0B' },
         ].map((item, index) => (
-          <Pressable key={index} style={styles.downloadCard}>
+          <Pressable key={index} style={styles.downloadCard} onPress={() => Alert.alert('Download', `${item.label} will be downloaded to your device.`)}>
             <View style={[styles.downloadIcon, { backgroundColor: item.color + '15' }]}>
               <item.icon size={20} color={item.color} />
             </View>
@@ -149,7 +149,7 @@ export default function Learn() {
       <Text style={styles.subsectionTitle}>Video Library</Text>
       <View style={styles.videoGrid}>
         {videos.map(video => (
-          <Pressable key={video.id} style={styles.videoCard}>
+          <Pressable key={video.id} style={styles.videoCard} onPress={() => Alert.alert('Video', `Playing: ${video.title}`)}>
             <View style={styles.videoThumbnail}>
               <View style={styles.playButton}>
                 <Play size={24} color="#FFFFFF" fill="#FFFFFF" />
@@ -176,7 +176,7 @@ export default function Learn() {
       </View>
 
       {/* Watch More */}
-      <Pressable style={styles.watchMoreButton}>
+      <Pressable style={styles.watchMoreButton} onPress={() => Linking.openURL('https://youtube.com')}>
         <Text style={styles.watchMoreText}>Browse All Videos</Text>
         <ExternalLink size={16} color={colors.primary} />
       </Pressable>
@@ -210,7 +210,7 @@ export default function Learn() {
                 <Text style={styles.meetingText}>{group.meetingTime}</Text>
               </View>
             )}
-            <Pressable style={styles.joinBtn}>
+            <Pressable style={styles.joinBtn} onPress={() => Alert.alert('Join Group', `You've requested to join ${group.name}. An admin will review your request.`)}>
               <Text style={styles.joinBtnText}>Join</Text>
             </Pressable>
           </View>
@@ -225,7 +225,7 @@ export default function Learn() {
           { title: 'Managing fatigue during treatment', replies: 18, time: '5h ago' },
           { title: 'Preparing for blood transfusions', replies: 31, time: '1d ago' },
         ].map((thread, index) => (
-          <Pressable key={index} style={styles.forumThread}>
+          <Pressable key={index} style={styles.forumThread} onPress={() => Alert.alert(thread.title, `${thread.replies} replies • ${thread.time}`)}>
             <View style={styles.threadContent}>
               <Text style={styles.threadTitle}>{thread.title}</Text>
               <Text style={styles.threadMeta}>{thread.replies} replies • {thread.time}</Text>
@@ -233,7 +233,7 @@ export default function Learn() {
             <ChevronRight size={18} color={colors.textMuted} />
           </Pressable>
         ))}
-        <Pressable style={styles.viewAllBtn}>
+        <Pressable style={styles.viewAllBtn} onPress={() => Alert.alert('Forum', 'Opening community forum...')}>
           <Text style={styles.viewAllText}>View All Discussions</Text>
         </Pressable>
       </View>
@@ -247,7 +247,7 @@ export default function Learn() {
         </View>
         <Text style={styles.helplineNumber}>1800-XXX-XXXX</Text>
         <Text style={styles.helplineNote}>Free, confidential support available 24/7</Text>
-        <Pressable style={styles.callNowBtn}>
+        <Pressable style={styles.callNowBtn} onPress={() => Linking.openURL('tel:1800123456')}>
           <Phone size={16} color="#FFFFFF" />
           <Text style={styles.callNowText}>Call Now</Text>
         </Pressable>
@@ -281,7 +281,7 @@ export default function Learn() {
                 {scheme.eligibility ? 'You may qualify' : 'Check eligibility'}
               </Text>
             </View>
-            <Pressable style={styles.applyBtn}>
+            <Pressable style={styles.applyBtn} onPress={() => Linking.openURL('https://nhp.gov.in')}>
               <Text style={styles.applyBtnText}>Learn More</Text>
               <ExternalLink size={14} color={colors.primary} />
             </Pressable>
@@ -302,7 +302,7 @@ export default function Learn() {
               </View>
             )}
           </View>
-          <Pressable style={styles.contactBtn}>
+          <Pressable style={styles.contactBtn} onPress={() => Linking.openURL(`tel:${contact.phone}`)}>
             <Phone size={18} color="#FFFFFF" />
           </Pressable>
         </View>
@@ -316,7 +316,7 @@ export default function Learn() {
         <Text style={styles.findCareText}>
           Find specialized healthcare providers and treatment centers near you
         </Text>
-        <Pressable style={styles.findCareBtn}>
+        <Pressable style={styles.findCareBtn} onPress={() => Linking.openURL('https://maps.google.com/search/thalassemia+treatment+center')}>
           <Globe size={16} color="#FFFFFF" />
           <Text style={styles.findCareBtnText}>Search Nearby</Text>
         </Pressable>

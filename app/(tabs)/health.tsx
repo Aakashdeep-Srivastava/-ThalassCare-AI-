@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import Svg, { Circle } from 'react-native-svg';
@@ -23,8 +23,6 @@ import { colors, layout } from '@/constants/theme';
 import { symptoms, medications, transfusions } from '@/constants/data';
 
 type TabType = 'bloodwork' | 'symptoms' | 'medications' | 'vitals';
-
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 // Mini Ring Progress Component
 function MiniRing({
@@ -507,7 +505,7 @@ export default function Health() {
             </View>
 
             {/* Log Vital Button */}
-            <Pressable style={styles.logVitalBtn}>
+            <Pressable style={styles.logVitalBtn} onPress={() => Alert.alert('Log Vitals', 'Enter your current vitals to track your health.')}>
               <Plus size={18} color="#fff" />
               <Text style={styles.logVitalText}>Log Vitals</Text>
             </Pressable>

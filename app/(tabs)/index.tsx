@@ -91,9 +91,16 @@ function VitalMini({ icon: Icon, value, unit, color, trend }: any) {
 }
 
 // Quick Action Pill
-function ActionPill({ icon: Icon, label, color, urgent }: any) {
+function ActionPill({ icon: Icon, label, color, urgent, onPress }: any) {
   return (
-    <Pressable style={[styles.actionPill, urgent && styles.actionPillUrgent]}>
+    <Pressable
+      style={({ pressed }) => [
+        styles.actionPill,
+        urgent && styles.actionPillUrgent,
+        pressed && styles.actionPillPressed
+      ]}
+      onPress={onPress}
+    >
       <View style={[styles.actionPillIcon, { backgroundColor: urgent ? colors.bloodRed : color + '15' }]}>
         <Icon size={18} color={urgent ? '#fff' : color} />
       </View>
@@ -181,7 +188,7 @@ export default function Dashboard() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Vitals</Text>
-            <Pressable style={styles.seeAllBtn}>
+            <Pressable style={styles.seeAllBtn} onPress={() => router.push('/health')}>
               <Text style={styles.seeAllText}>See all</Text>
               <ChevronRight size={14} color={colors.primary} />
             </Pressable>
@@ -205,7 +212,7 @@ export default function Dashboard() {
                 <Text style={styles.alertTitle}>{urgentInsights[0].title}</Text>
                 <Text style={styles.alertMessage}>{urgentInsights[0].message}</Text>
               </View>
-              <Pressable style={styles.alertAction}>
+              <Pressable style={styles.alertAction} onPress={() => router.push('/health')}>
                 <Text style={styles.alertActionText}>View</Text>
               </Pressable>
             </View>
@@ -216,12 +223,12 @@ export default function Dashboard() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionsGrid}>
-            <ActionPill icon={Activity} label="Log Symptoms" color={colors.accentPurple} />
-            <ActionPill icon={Droplets} label="Blood Request" color={colors.bloodRed} urgent />
-            <ActionPill icon={Pill} label="Medications" color={colors.success} />
-            <ActionPill icon={Calendar} label="Appointments" color={colors.info} />
-            <ActionPill icon={Phone} label="Call Doctor" color={colors.accentCyan} />
-            <ActionPill icon={AlertTriangle} label="Emergency" color={colors.warning} />
+            <ActionPill icon={Activity} label="Log Symptoms" color={colors.accentPurple} onPress={() => router.push('/health')} />
+            <ActionPill icon={Droplets} label="Blood Request" color={colors.bloodRed} urgent onPress={() => router.push('/appointments')} />
+            <ActionPill icon={Pill} label="Medications" color={colors.success} onPress={() => router.push('/health')} />
+            <ActionPill icon={Calendar} label="Appointments" color={colors.info} onPress={() => router.push('/appointments')} />
+            <ActionPill icon={Phone} label="Call Doctor" color={colors.accentCyan} onPress={() => router.push('/profile')} />
+            <ActionPill icon={AlertTriangle} label="Emergency" color={colors.warning} onPress={() => router.push('/appointments')} />
           </View>
         </View>
 
@@ -234,7 +241,7 @@ export default function Dashboard() {
             </View>
           </View>
           {regularInsights.map(insight => (
-            <Pressable key={insight.id} style={styles.insightCard}>
+            <Pressable key={insight.id} style={styles.insightCard} onPress={() => router.push('/health')}>
               <View style={[styles.insightIcon, { backgroundColor: insight.type === 'tip' ? colors.infoGlow : colors.successGlow }]}>
                 <Zap size={14} color={insight.type === 'tip' ? colors.info : colors.success} />
               </View>
@@ -530,6 +537,10 @@ const styles = StyleSheet.create({
   actionPillUrgent: {
     backgroundColor: colors.bloodRedLight,
     borderColor: colors.bloodRed + '20',
+  },
+  actionPillPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.97 }],
   },
   actionPillIcon: {
     width: 34,

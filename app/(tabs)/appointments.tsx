@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Linking, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle } from 'react-native-svg';
 import {
@@ -199,10 +199,10 @@ export default function Schedule() {
                 </Text>
               </View>
               <View style={styles.actionBtns}>
-                <Pressable style={styles.actionBtn}>
+                <Pressable style={styles.actionBtn} onPress={() => Linking.openURL('tel:+911234567890')}>
                   <Phone size={16} color={colors.primary} />
                 </Pressable>
-                <Pressable style={styles.actionBtn}>
+                <Pressable style={styles.actionBtn} onPress={() => Linking.openURL('https://maps.google.com')}>
                   <Navigation size={16} color={colors.primary} />
                 </Pressable>
               </View>
@@ -366,10 +366,10 @@ export default function Schedule() {
               <Text style={styles.bankName} numberOfLines={1}>{bank.name}</Text>
               <Text style={styles.bankDistance}>{bank.distance}</Text>
               <View style={styles.bankActions}>
-                <Pressable style={styles.bankBtn}>
+                <Pressable style={styles.bankBtn} onPress={() => Linking.openURL(`tel:${bank.phone}`)}>
                   <Phone size={14} color={colors.primary} />
                 </Pressable>
-                <Pressable style={styles.bankBtn}>
+                <Pressable style={styles.bankBtn} onPress={() => Linking.openURL('https://maps.google.com')}>
                   <Navigation size={14} color={colors.primary} />
                 </Pressable>
               </View>
@@ -404,11 +404,11 @@ export default function Schedule() {
             <Text style={styles.emergencyTitle}>Urgent Blood Need?</Text>
           </View>
           <View style={styles.emergencyBtns}>
-            <Pressable style={styles.emergencyBtn}>
+            <Pressable style={styles.emergencyBtn} onPress={() => Alert.alert('Blood Request', 'Your urgent blood request has been submitted. Blood banks nearby have been notified.')}>
               <Droplets size={16} color="#fff" />
               <Text style={styles.emergencyBtnText}>Request Blood</Text>
             </Pressable>
-            <Pressable style={styles.sosBtn}>
+            <Pressable style={styles.sosBtn} onPress={() => Linking.openURL('tel:102')}>
               <Phone size={16} color={colors.bloodRed} />
               <Text style={styles.sosBtnText}>SOS</Text>
             </Pressable>
