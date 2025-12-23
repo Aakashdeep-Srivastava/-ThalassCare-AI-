@@ -1,74 +1,172 @@
-# ThalassCare AI - Hackathon Architecture Overview
+# ThalassCare AI
 
-## System Architecture (Mermaid Diagram)
+> **Empowering Thalassemia Patients with AI-Driven Care Management**
+
+A comprehensive mobile health application designed to revolutionize care management for thalassemia patients through intelligent tracking, predictive analytics, and seamless healthcare coordination.
+
+---
+
+## The Problem
+
+### Thalassemia: A Silent Battle
+
+Thalassemia is a genetic blood disorder affecting **over 270 million carriers worldwide**, with approximately **100,000 patients in India alone** requiring regular blood transfusions to survive.
+
+**Challenges faced by patients:**
+
+- **Lifelong Dependency:** Patients need blood transfusions every 2-4 weeks throughout their lives
+- **Iron Overload Crisis:** Regular transfusions lead to dangerous iron accumulation requiring daily chelation therapy
+- **Fragmented Care:** Medical records scattered across multiple hospitals and blood banks
+- **Blood Availability Anxiety:** Constant uncertainty about blood availability, especially for rare blood types
+- **Financial Burden:** Treatment costs of ₹1-2 lakhs annually push families into poverty
+- **Information Gap:** Limited access to disease education and self-management resources
+- **Emotional Toll:** Isolation, anxiety, and lack of peer support
+
+### The Reality
+
+```
+Every 8 minutes, a child is born with thalassemia in India.
+Only 50% of patients survive beyond 20 years due to inadequate care.
+```
+
+---
+
+## The Solution
+
+### ThalassCare AI: Your Complete Care Companion
+
+ThalassCare AI transforms thalassemia management from a fragmented, stressful experience into a streamlined, supportive journey. Our app puts patients at the center of their care with AI-powered insights and comprehensive tracking.
+
+**Our Mission:** No patient should miss a transfusion. No family should navigate this journey alone.
+
+---
+
+## Key Features
+
+### 1. Smart Dashboard
+- **Health Score:** AI-calculated wellness score (1-100) based on your vitals and trends
+- **Transfusion Countdown:** Visual countdown to next scheduled transfusion
+- **Quick Actions:** One-tap access to emergency blood request, symptom logging, and doctor calls
+- **Personalized Insights:** AI-generated health tips tailored to your condition
+
+### 2. Comprehensive Health Tracking
+- **Blood Work Monitoring:** Track hemoglobin, ferritin, and other critical markers
+- **Iron Overload Alerts:** Visual indicators when ferritin levels approach dangerous thresholds
+- **Symptom Journal:** Easy-to-use daily symptom checker with severity tracking
+- **Medication Tracker:** Never miss chelation therapy or folic acid supplements
+- **Vitals Dashboard:** Monitor heart rate, blood pressure, SpO2, and temperature
+
+### 3. Transfusion & Appointment Management
+- **Smart Scheduling:** Calendar view of all transfusions and appointments
+- **Blood Bank Integration:** Real-time blood availability from 3,800+ centers via e-RaktKosh
+- **Preparation Checklists:** Pre-transfusion reminders and checklists
+- **Doctor Directory:** Quick access to your care team with one-tap calling
+
+### 4. Education & Resources
+- **Disease Education:** Simple, illustrated guides about thalassemia management
+- **Video Library:** Patient stories, doctor explanations, and self-care tutorials
+- **Nutrition Guidance:** Iron-safe diet recommendations and meal planning
+- **Exercise Tips:** Safe physical activity guidelines for thalassemia patients
+
+### 5. Community & Support
+- **Peer Connection:** Connect with other patients and families
+- **Support Groups:** Find local and online thalassemia support communities
+- **Caregiver Resources:** Dedicated content for parents and caregivers
+- **Mental Health:** Access to counseling resources and crisis support
+
+### 6. Financial Assistance
+- **Government Schemes:** Complete guide to Thalassemia Bal Sewa Yojana and other programs
+- **Insurance Navigation:** Help with medical insurance claims and coverage
+- **Cost Calculator:** Estimate and track treatment expenses
+- **NGO Directory:** Connect with organizations offering financial support
+
+---
+
+## App Screens
+
+| Dashboard | Health Tracking | Schedule | Resources | Profile |
+|:---------:|:---------------:|:--------:|:---------:|:-------:|
+| Health overview & quick actions | Blood work, symptoms & medications | Transfusions & appointments | Education & community | Medical info & settings |
+
+---
+
+## Technology Stack
+
+### Frontend
+- **React Native** with Expo SDK 54
+- **TypeScript** for type safety
+- **Expo Router** for navigation
+- **React Native SVG** for charts and visualizations
+
+### Design
+- **Modern UI/UX** with calming teal color palette
+- **Accessibility-first** design with large touch targets
+- **Responsive layouts** for all device sizes
+
+### Backend Architecture (Planned)
+- **LangGraph** Multi-Agent AI System
+- **PostgreSQL** + **Redis** for data storage
+- **Apache Kafka** for real-time messaging
+- **AWS Cloud** with HIPAA compliance
+
+---
+
+## System Architecture
 
 ```mermaid
 graph TB
-    %% Users
-    subgraph "👥 Users"
-        U1[👤 Thalassemia Patients<br/>100,000+ users]
-        U2[🩸 Blood Donors<br/>402M eligible]
-        U3[🏥 Healthcare Providers]
+    subgraph "Users"
+        U1[Thalassemia Patients]
+        U2[Blood Donors]
+        U3[Healthcare Providers]
     end
 
-    %% Frontend
-    subgraph "📱 User Interface"
-        UI1[📱 Mobile App<br/>React Native]
-        UI2[💬 WhatsApp Bot<br/>500M+ users]
-        UI3[🎙️ Voice Interface<br/>Multilingual]
+    subgraph "Mobile App"
+        UI1[React Native App]
+        UI2[WhatsApp Bot]
+        UI3[Voice Interface]
     end
 
-    %% Core AI System - The Star of the Show
-    subgraph "🤖 ThalassCare AI Multi-Agent System (LangGraph)"
-        ORCHESTRATOR[🧠 LangGraph Orchestrator<br/>Agent Coordinator]
-        
-        subgraph "🔥 6 AI Agents"
-            A1[🩸 BloodMatch AI<br/>Predictive Donor Matching<br/>72hr Forecasting]
-            A2[🏥 CareCoordinator<br/>Healthcare Integration<br/>Appointment Scheduling]
-            A3[📚 EducationBot<br/>Personalized Learning<br/>Multilingual Content]
-            A4[🔍 HealthMonitor<br/>Predictive Analytics<br/>Iron Overload Detection]
-            A5[💰 FinanceAssistant<br/>Cost Optimization<br/>Insurance Claims]
-            A6[🔒 SecurityGuardian<br/>Data Privacy<br/>Blockchain Consent]
+    subgraph "ThalassCare AI Multi-Agent System"
+        ORCHESTRATOR[LangGraph Orchestrator]
+
+        subgraph "6 AI Agents"
+            A1[BloodMatch AI]
+            A2[CareCoordinator]
+            A3[EducationBot]
+            A4[HealthMonitor]
+            A5[FinanceAssistant]
+            A6[SecurityGuardian]
         end
-        
-        MEMORY[(🧠 Shared Memory<br/>Knowledge Graph<br/>Neo4j)]
+
+        MEMORY[(Shared Memory - Neo4j)]
     end
 
-    %% Backend Services
-    subgraph "⚙️ Core Services"
-        API[🚪 API Gateway]
-        ML[🤖 ML Pipeline<br/>Scikit-learn + TensorFlow<br/>89% Accuracy]
-        DB[(💾 Database<br/>PostgreSQL + Redis)]
-        QUEUE[📨 Message Queue<br/>Apache Kafka]
+    subgraph "Core Services"
+        API[API Gateway]
+        ML[ML Pipeline - 89% Accuracy]
+        DB[(PostgreSQL + Redis)]
+        QUEUE[Apache Kafka]
     end
 
-    %% External Integrations - Key for Hackathon
-    subgraph "🌐 Key Integrations"
-        ERAKTKOSH[🏛️ e-RaktKosh<br/>Government Blood Banks<br/>3,800+ centers]
-        HOSPITALS[🏥 Hospital Systems<br/>FHIR Standards]
-        WHATSAPP[💬 WhatsApp API<br/>Direct Messaging]
-        MAPS[🗺️ Google Maps<br/>Location Services]
+    subgraph "Integrations"
+        ERAKTKOSH[e-RaktKosh - 3,800+ Blood Banks]
+        HOSPITALS[Hospital Systems - FHIR]
+        WHATSAPP[WhatsApp API]
+        MAPS[Google Maps]
     end
 
-    %% Cloud - Simplified
-    CLOUD[☁️ AWS Cloud<br/>HIPAA Compliant<br/>Auto-Scaling]
+    CLOUD[AWS Cloud - HIPAA Compliant]
 
-    %% User Connections
     U1 --> UI1
-    U1 --> UI2
     U2 --> UI1
-    U2 --> UI2
     U3 --> UI1
 
-    %% UI to API
     UI1 --> API
     UI2 --> API
     UI3 --> API
 
-    %% API to Orchestrator
     API --> ORCHESTRATOR
-
-    %% Orchestrator to Agents (Star Pattern)
     ORCHESTRATOR --> A1
     ORCHESTRATOR --> A2
     ORCHESTRATOR --> A3
@@ -76,133 +174,150 @@ graph TB
     ORCHESTRATOR --> A5
     ORCHESTRATOR --> A6
 
-    %% Agents share memory
     A1 <--> MEMORY
     A2 <--> MEMORY
-    A3 <--> MEMORY
     A4 <--> MEMORY
-    A5 <--> MEMORY
-    A6 <--> MEMORY
 
-    %% Agents to Services
-    A1 --> ML
-    A1 --> DB
-    A2 --> DB
-    A4 --> ML
-    A5 --> DB
-    A6 --> DB
-
-    %% Message Queue for Agent Communication
-    ORCHESTRATOR <--> QUEUE
-    QUEUE <--> ML
-    QUEUE <--> DB
-
-    %% External Integrations - Key Hackathon Features
     A1 --> ERAKTKOSH
-    A1 --> MAPS
     A2 --> HOSPITALS
     A3 --> WHATSAPP
-    A4 --> HOSPITALS
-    A5 --> ERAKTKOSH
-
-    %% Everything runs on cloud
-    ORCHESTRATOR -.-> CLOUD
-    ML -.-> CLOUD
-    DB -.-> CLOUD
-    API -.-> CLOUD
-
-    %% Key Features Callouts
-    PREDICTION["🎯 Key Innovation:<br/>72-hour blood availability prediction<br/>89% accuracy using ML models"]
-    INTEGRATION["🔗 Real Impact:<br/>Seamless integration with<br/>e-RaktKosh & 3,800+ blood banks"]
-    WHATSAPP_FEATURE["💬 User Adoption:<br/>WhatsApp integration<br/>500M+ users, no app download"]
-
-    %% Connect callouts
-    A1 -.-> PREDICTION
-    ERAKTKOSH -.-> INTEGRATION
-    UI2 -.-> WHATSAPP_FEATURE
-
-    %% Styling for Hackathon Appeal
-    classDef userStyle fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
-    classDef uiStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000
-    classDef aiStyle fill:#fff3e0,stroke:#f57c00,stroke-width:4px,color:#000
-    classDef agentStyle fill:#ffecb3,stroke:#ff8f00,stroke-width:3px,color:#000
-    classDef serviceStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000
-    classDef integrationStyle fill:#fff8e1,stroke:#fbc02d,stroke-width:2px,color:#000
-    classDef cloudStyle fill:#f1f8e9,stroke:#689f38,stroke-width:2px,color:#000
-    classDef calloutStyle fill:#ffebee,stroke:#d32f2f,stroke-width:3px,color:#000
-
-    class U1,U2,U3 userStyle
-    class UI1,UI2,UI3 uiStyle
-    class ORCHESTRATOR,MEMORY aiStyle
-    class A1,A2,A3,A4,A5,A6 agentStyle
-    class API,ML,DB,QUEUE serviceStyle
-    class ERAKTKOSH,HOSPITALS,WHATSAPP,MAPS integrationStyle
-    class CLOUD cloudStyle
-    class PREDICTION,INTEGRATION,WHATSAPP_FEATURE calloutStyle
 ```
 
 ---
 
-## Comprehensive System Description
+## Getting Started
 
-### 👥 Users
-- **Thalassemia Patients:** Over 100,000 users benefit from personalized care, blood matching, and health monitoring.
-- **Blood Donors:** 402 million eligible donors can connect and contribute seamlessly.
-- **Healthcare Providers:** Hospitals and clinics integrate for better patient outcomes.
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Expo CLI
+- iOS Simulator / Android Emulator / Physical device with Expo Go
 
-### 📱 User Interface
-- **Mobile App (React Native):** Intuitive, multilingual, and accessible for all users.
-- **WhatsApp Bot:** Reaches 500M+ users, enabling blood requests and health info without app downloads.
-- **Voice Interface:** Multilingual support for accessibility and inclusivity.
+### Installation
 
-### 🤖 ThalassCare AI Multi-Agent System (LangGraph)
-- **LangGraph Orchestrator:** Coordinates six specialized AI agents for end-to-end automation.
-- **BloodMatch AI:** Predicts donor matches and blood availability with 72-hour forecasting.
-- **CareCoordinator:** Integrates healthcare systems and schedules appointments.
-- **EducationBot:** Delivers personalized, multilingual health education.
-- **HealthMonitor:** Detects iron overload and provides predictive analytics.
-- **FinanceAssistant:** Optimizes costs and manages insurance claims.
-- **SecurityGuardian:** Ensures data privacy and blockchain-based consent management.
-- **Shared Memory:** Neo4j-powered knowledge graph for agent collaboration.
+```bash
+# Clone the repository
+git clone https://github.com/Aakashdeep-Srivastava/-ThalassCare-AI-.git
 
-### ⚙️ Core Services
-- **API Gateway:** Centralized access for all frontend and backend services.
-- **ML Pipeline:** Scikit-learn & TensorFlow models deliver 89% accuracy in predictions.
-- **Database:** PostgreSQL and Redis for scalable, reliable data storage.
-- **Message Queue:** Apache Kafka enables real-time agent communication.
+# Navigate to project directory
+cd -ThalassCare-AI-
 
-### 🌐 Key Integrations
-- **e-RaktKosh:** Connects to 3,800+ government blood banks for real-time availability.
-- **Hospital Systems:** FHIR standards for seamless healthcare integration.
-- **WhatsApp API:** Direct messaging for user engagement and notifications.
-- **Google Maps:** Location services for donor and hospital navigation.
+# Install dependencies
+npm install
 
-### ☁️ Cloud Infrastructure
-- **AWS Cloud:** HIPAA-compliant, auto-scaling, and secure for healthcare data.
+# Start the development server
+npx expo start
+```
 
----
+### Running the App
 
-## 🚀 Key Hackathon Innovations
-- **72-hour blood availability prediction** with 89% ML accuracy.
-- **Seamless integration** with e-RaktKosh and 3,800+ blood banks.
-- **WhatsApp integration** for instant user adoption—no app required.
+```bash
+# For iOS
+npx expo start --ios
+
+# For Android
+npx expo start --android
+
+# For Web
+npx expo start --web
+```
 
 ---
 
-## How It Works
-1. **Patients and donors interact** via mobile, WhatsApp, or voice.
-2. **Requests flow through the API Gateway** to the LangGraph Orchestrator.
-3. **AI agents collaborate** using shared memory and backend services.
-4. **Real-time predictions, education, and care coordination** delivered to users.
-5. **External integrations** ensure blood availability, healthcare access, and user engagement.
-6. **All data and services run securely on AWS Cloud.**
+## Project Structure
+
+```
+ThalassCare-AI/
+├── app/                    # Expo Router screens
+│   ├── (tabs)/            # Tab navigation screens
+│   │   ├── index.tsx      # Dashboard
+│   │   ├── health.tsx     # Health tracking
+│   │   ├── appointments.tsx # Schedule
+│   │   ├── resources.tsx  # Learn & community
+│   │   └── profile.tsx    # Profile & settings
+│   └── _layout.tsx        # Root layout
+├── components/            # Reusable components
+│   ├── Header.tsx
+│   ├── HealthCard.tsx
+│   ├── QuickAction.tsx
+│   └── ...
+├── constants/             # Theme and configuration
+│   ├── theme.ts          # Colors, spacing, typography
+│   └── data.ts           # Demo data
+├── context/              # React Context providers
+│   └── AppContext.tsx
+├── types/                # TypeScript definitions
+│   └── index.ts
+└── utils/                # Helper functions
+    └── helpers.ts
+```
+
+---
+
+## Key Innovations
+
+| Innovation | Description | Impact |
+|------------|-------------|--------|
+| **72-Hour Blood Prediction** | ML model predicts blood availability | 89% accuracy in forecasting |
+| **e-RaktKosh Integration** | Real-time government blood bank data | Access to 3,800+ centers |
+| **Multi-Agent AI** | 6 specialized AI agents for comprehensive care | Personalized, automated support |
+| **WhatsApp Access** | No app download required | Reaches 500M+ users instantly |
+
+---
+
+## Roadmap
+
+- [x] Mobile app UI with 5 core screens
+- [x] Health tracking with symptom logging
+- [x] Medication and transfusion scheduling
+- [x] Educational resources and community features
+- [ ] AI-powered health insights integration
+- [ ] e-RaktKosh API integration
+- [ ] WhatsApp bot deployment
+- [ ] Multi-language support (Hindi, Tamil, Bengali)
+- [ ] Wearable device integration
+- [ ] Telemedicine video consultations
 
 ---
 
 ## Contributing
-We welcome contributions! Please open issues or submit pull requests for improvements.
+
+We welcome contributions from developers, healthcare professionals, and the thalassemia community!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## Support
+
+If you or someone you know is affected by thalassemia, these resources can help:
+
+- **Thalassemia International Federation:** [thalassaemia.org.cy](https://thalassaemia.org.cy)
+- **Thalassemics India:** [thalassemicsindia.org](https://www.thalassemicsindia.org)
+- **National Health Portal India:** [nhp.gov.in](https://www.nhp.gov.in)
 
 ---
 
 ## License
-This project is licensed under the MIT License.
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+- Thalassemia patient communities for their invaluable feedback
+- Healthcare professionals who guided feature development
+- Open-source contributors and the React Native community
+
+---
+
+<p align="center">
+  <strong>Built with care for the thalassemia community</strong>
+  <br>
+  <sub>Together, we can make every transfusion count.</sub>
+</p>
