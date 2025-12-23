@@ -1,136 +1,257 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { TrendingUp, CircleAlert as AlertCircle, Calendar, Pill, Activity, Shield } from 'lucide-react-native';
+import Svg, { Circle } from 'react-native-svg';
+import {
+  Activity,
+  Droplets,
+  Pill,
+  Calendar,
+  Phone,
+  AlertTriangle,
+  Heart,
+  Bell,
+  Zap,
+  TrendingUp,
+  Thermometer,
+  Wind,
+  ChevronRight,
+  Sparkles,
+} from 'lucide-react-native';
+import Header from '@/components/Header';
+import { usePatient } from '@/context/PatientContext';
+import { colors, layout } from '@/constants/theme';
+import { transfusions } from '@/constants/data';
+
+const { width } = Dimensions.get('window');
+
+// Circular Progress Ring Component
+function HealthRing({ score }: { score: number }) {
+  const size = 100;
+  const strokeWidth = 8;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const progress = (score / 100) * circumference;
+
+  const getColor = () => {
+    if (score >= 80) return colors.success;
+    if (score >= 60) return colors.warning;
+    return colors.error;
+  };
+
+  return (
+    <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+      <Svg width={size} height={size} style={{ position: 'absolute' }}>
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={colors.border}
+          strokeWidth={strokeWidth}
+          fill="transparent"
+        />
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={getColor()}
+          strokeWidth={strokeWidth}
+          fill="transparent"
+          strokeDasharray={`${progress} ${circumference}`}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        />
+      </Svg>
+      <View style={{ alignItems: 'center' }}>
+        <Text style={[styles.ringScore, { color: getColor() }]}>{score}</Text>
+        <Text style={styles.ringLabel}>Health</Text>
+      </View>
+    </View>
+  );
+}
+
+// Mini Vital Card Component
+function VitalMini({ icon: Icon, value, unit, color, trend }: any) {
+  return (
+    <View style={styles.vitalMini}>
+      <View style={[styles.vitalMiniIcon, { backgroundColor: color + '15' }]}>
+        <Icon size={16} color={color} />
+      </View>
+      <Text style={styles.vitalMiniValue}>{value}</Text>
+      <Text style={styles.vitalMiniUnit}>{unit}</Text>
+      {trend && (
+        <View style={[styles.trendBadge, { backgroundColor: colors.successGlow }]}>
+          <TrendingUp size={10} color={colors.success} />
+        </View>
+      )}
+    </View>
+  );
+}
+
+// Quick Action Pill
+function ActionPill({ icon: Icon, label, color, urgent }: any) {
+  return (
+    <Pressable style={[styles.actionPill, urgent && styles.actionPillUrgent]}>
+      <View style={[styles.actionPillIcon, { backgroundColor: urgent ? colors.bloodRed : color + '15' }]}>
+        <Icon size={18} color={urgent ? '#fff' : color} />
+      </View>
+      <Text style={[styles.actionPillLabel, urgent && { color: colors.bloodRed }]}>{label}</Text>
+    </Pressable>
+  );
+}
 
 export default function Dashboard() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
-        <LinearGradient
-          colors={['#2563EB', '#1D4ED8']}
-          style={styles.header}
-        >
-          <View style={styles.headerContent}>
-            <Text style={styles.greeting}>Good morning!</Text>
-            <Text style={styles.userName}>Sarah Johnson</Text>
-            <Text style={styles.subtitle}>Let's monitor your health today</Text>
-          </View>
-        </LinearGradient>
+  const {
+    patient,
+    daysUntilTransfusion,
+    healthScore,
+    aiInsights,
+  } = usePatient();
 
-        {/* AI Insights Card */}
-        <View style={styles.aiCard}>
-          <View style={styles.aiHeader}>
-            <Shield size={24} color="#059669" />
-            <Text style={styles.aiTitle}>AI Health Insights</Text>
+  const nextTransfusion = transfusions.find(t => t.status === 'scheduled');
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const urgentInsights = aiInsights.filter(i => i.type === 'alert');
+  const regularInsights = aiInsights.filter(i => i.type !== 'alert').slice(0, 2);
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <Header
+        title={`${getGreeting()}`}
+        subtitle={patient.name.split(' ')[0]}
+        icon={Bell}
+      />
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Hero Section - Health Score + Transfusion */}
+        <View style={styles.heroSection}>
+          {/* Health Ring Card */}
+          <View style={styles.healthCard}>
+            <HealthRing score={healthScore} />
+            <View style={styles.healthMeta}>
+              <View style={styles.healthMetaItem}>
+                <Droplets size={14} color={colors.bloodRed} />
+                <Text style={styles.healthMetaText}>{patient.bloodType}</Text>
+              </View>
+              <View style={styles.healthMetaDivider} />
+              <View style={styles.healthMetaItem}>
+                <Activity size={14} color={colors.primary} />
+                <Text style={styles.healthMetaText}>Stable</Text>
+              </View>
+            </View>
           </View>
-          <Text style={styles.aiText}>
-            Your recent blood work shows stable hemoglobin levels. Continue current treatment plan.
-          </Text>
-          <View style={styles.aiStatus}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText}>Health Status: Stable</Text>
-          </View>
+
+          {/* Transfusion Countdown */}
+          {nextTransfusion && (
+            <View style={styles.countdownCard}>
+              <View style={styles.countdownHeader}>
+                <Droplets size={14} color={colors.bloodRed} />
+                <Text style={styles.countdownTitle}>NEXT</Text>
+              </View>
+              <Text style={styles.countdownValue}>{daysUntilTransfusion}</Text>
+              <Text style={styles.countdownUnit}>days</Text>
+              <Text style={styles.countdownDate}>
+                {new Date(nextTransfusion.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              </Text>
+              <View style={styles.countdownStatus}>
+                <View style={styles.statusDot} />
+                <Text style={styles.statusText}>Confirmed</Text>
+              </View>
+            </View>
+          )}
         </View>
+
+        {/* Vitals Strip */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Vitals</Text>
+            <Pressable style={styles.seeAllBtn}>
+              <Text style={styles.seeAllText}>See all</Text>
+              <ChevronRight size={14} color={colors.primary} />
+            </Pressable>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.vitalsRow}>
+            <VitalMini icon={Heart} value="72" unit="bpm" color={colors.error} trend="up" />
+            <VitalMini icon={Activity} value="120/80" unit="mmHg" color={colors.info} />
+            <VitalMini icon={Thermometer} value="98.6" unit="°F" color={colors.warning} />
+            <VitalMini icon={Wind} value="98" unit="%" color={colors.success} trend="up" />
+          </ScrollView>
+        </View>
+
+        {/* Urgent Alerts */}
+        {urgentInsights.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.alertCard}>
+              <View style={styles.alertIconPulse}>
+                <AlertTriangle size={18} color={colors.error} />
+              </View>
+              <View style={styles.alertContent}>
+                <Text style={styles.alertTitle}>{urgentInsights[0].title}</Text>
+                <Text style={styles.alertMessage}>{urgentInsights[0].message}</Text>
+              </View>
+              <Pressable style={styles.alertAction}>
+                <Text style={styles.alertActionText}>View</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
 
         {/* Quick Actions */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <View style={styles.actionGrid}>
-            <Pressable style={styles.actionCard}>
-              <Activity size={32} color="#2563EB" />
-              <Text style={styles.actionTitle}>Log Symptoms</Text>
-              <Text style={styles.actionSubtitle}>Track daily symptoms</Text>
-            </Pressable>
-            
-            <Pressable style={styles.actionCard}>
-              <TrendingUp size={32} color="#059669" />
-              <Text style={styles.actionTitle}>Blood Tests</Text>
-              <Text style={styles.actionSubtitle}>View lab results</Text>
-            </Pressable>
-            
-            <Pressable style={styles.actionCard}>
-              <Pill size={32} color="#7C3AED" />
-              <Text style={styles.actionTitle}>Medications</Text>
-              <Text style={styles.actionSubtitle}>Manage prescriptions</Text>
-            </Pressable>
-            
-            <Pressable style={styles.actionCard}>
-              <Calendar size={32} color="#DC2626" />
-              <Text style={styles.actionTitle}>Appointments</Text>
-              <Text style={styles.actionSubtitle}>Schedule visits</Text>
-            </Pressable>
+          <View style={styles.actionsGrid}>
+            <ActionPill icon={Activity} label="Log Symptoms" color={colors.accentPurple} />
+            <ActionPill icon={Droplets} label="Blood Request" color={colors.bloodRed} urgent />
+            <ActionPill icon={Pill} label="Medications" color={colors.success} />
+            <ActionPill icon={Calendar} label="Appointments" color={colors.info} />
+            <ActionPill icon={Phone} label="Call Doctor" color={colors.accentCyan} />
+            <ActionPill icon={AlertTriangle} label="Emergency" color={colors.warning} />
           </View>
         </View>
 
-        {/* Recent Activity */}
+        {/* AI Insights */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Recent Activity</Text>
-          <View style={styles.activityCard}>
-            <View style={styles.activityItem}>
-              <View style={[styles.activityIcon, { backgroundColor: '#EFF6FF' }]}>
-                <TrendingUp size={20} color="#2563EB" />
-              </View>
-              <View style={styles.activityContent}>
-                <Text style={styles.activityTitle}>Blood Test Results</Text>
-                <Text style={styles.activityTime}>2 hours ago</Text>
-              </View>
-            </View>
-            
-            <View style={styles.activityItem}>
-              <View style={[styles.activityIcon, { backgroundColor: '#F0FDF4' }]}>
-                <Pill size={20} color="#059669" />
-              </View>
-              <View style={styles.activityContent}>
-                <Text style={styles.activityTitle}>Medication Taken</Text>
-                <Text style={styles.activityTime}>4 hours ago</Text>
-              </View>
-            </View>
-            
-            <View style={styles.activityItem}>
-              <View style={[styles.activityIcon, { backgroundColor: '#FEF2F2' }]}>
-                <AlertCircle size={20} color="#DC2626" />
-              </View>
-              <View style={styles.activityContent}>
-                <Text style={styles.activityTitle}>Appointment Reminder</Text>
-                <Text style={styles.activityTime}>Tomorrow at 2:00 PM</Text>
-              </View>
+          <View style={styles.sectionHeader}>
+            <View style={styles.sectionTitleRow}>
+              <Sparkles size={16} color={colors.accentPurple} />
+              <Text style={styles.sectionTitle}>AI Insights</Text>
             </View>
           </View>
+          {regularInsights.map(insight => (
+            <Pressable key={insight.id} style={styles.insightCard}>
+              <View style={[styles.insightIcon, { backgroundColor: insight.type === 'tip' ? colors.infoGlow : colors.successGlow }]}>
+                <Zap size={14} color={insight.type === 'tip' ? colors.info : colors.success} />
+              </View>
+              <View style={styles.insightContent}>
+                <Text style={styles.insightTitle}>{insight.title}</Text>
+                <Text style={styles.insightMessage} numberOfLines={2}>{insight.message}</Text>
+              </View>
+              <ChevronRight size={16} color={colors.textMuted} />
+            </Pressable>
+          ))}
         </View>
 
-        {/* Health Metrics */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Health Metrics</Text>
-          <View style={styles.metricsGrid}>
-            <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>11.8</Text>
-              <Text style={styles.metricUnit}>g/dL</Text>
-              <Text style={styles.metricLabel}>Hemoglobin</Text>
-              <View style={[styles.trendIndicator, { backgroundColor: '#059669' }]} />
-            </View>
-            
-            <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>125</Text>
-              <Text style={styles.metricUnit}>μg/L</Text>
-              <Text style={styles.metricLabel}>Ferritin</Text>
-              <View style={[styles.trendIndicator, { backgroundColor: '#F59E0B' }]} />
-            </View>
-            
-            <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>82</Text>
-              <Text style={styles.metricUnit}>bpm</Text>
-              <Text style={styles.metricLabel}>Heart Rate</Text>
-              <View style={[styles.trendIndicator, { backgroundColor: '#059669' }]} />
-            </View>
-            
-            <View style={styles.metricCard}>
-              <Text style={styles.metricValue}>98%</Text>
-              <Text style={styles.metricUnit}>SpO2</Text>
-              <Text style={styles.metricLabel}>Oxygen</Text>
-              <View style={[styles.trendIndicator, { backgroundColor: '#059669' }]} />
-            </View>
+        {/* Blood Type Card */}
+        <View style={styles.bloodCard}>
+          <View style={styles.bloodCardIcon}>
+            <Droplets size={18} color={colors.bloodRed} />
+          </View>
+          <View style={styles.bloodCardInfo}>
+            <Text style={styles.bloodCardLabel}>Blood Type</Text>
+            <Text style={styles.bloodCardValue}>{patient.bloodType}</Text>
+          </View>
+          <View style={styles.bloodCardTag}>
+            <Text style={styles.bloodCardTagText}>{patient.bloodType}</Text>
           </View>
         </View>
       </ScrollView>
@@ -141,198 +262,360 @@ export default function Dashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: layout.scrollContentPadding,
   },
-  header: {
+  section: {
+    marginTop: 20,
     paddingHorizontal: 20,
-    paddingVertical: 30,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
   },
-  headerContent: {
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  seeAllBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  greeting: {
-    fontSize: 16,
-    color: '#E0E7FF',
-    fontWeight: '500',
+  seeAllText: {
+    fontSize: 13,
+    color: colors.primary,
+    fontWeight: '600',
   },
-  userName: {
-    fontSize: 28,
-    color: '#FFFFFF',
-    fontWeight: '700',
-    marginVertical: 4,
+
+  // Hero Section
+  heroSection: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    gap: 12,
   },
-  subtitle: {
-    fontSize: 14,
-    color: '#C7D2FE',
-  },
-  aiCard: {
-    margin: 20,
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+  healthCard: {
+    flex: 1,
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.06,
     shadowRadius: 8,
     elevation: 3,
   },
-  aiHeader: {
+  healthMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginTop: 12,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
-  aiTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#111827',
-    marginLeft: 8,
-  },
-  aiText: {
-    fontSize: 16,
-    color: '#4B5563',
-    lineHeight: 24,
-    marginBottom: 16,
-  },
-  aiStatus: {
+  healthMetaItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 4,
   },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#059669',
-    marginRight: 8,
-  },
-  statusText: {
-    fontSize: 14,
-    color: '#059669',
-    fontWeight: '600',
-  },
-  section: {
-    marginHorizontal: 20,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 16,
-  },
-  actionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  actionCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  actionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111827',
-    marginTop: 8,
-  },
-  actionSubtitle: {
+  healthMetaText: {
     fontSize: 12,
-    color: '#6B7280',
-    marginTop: 4,
-    textAlign: 'center',
+    color: colors.textSecondary,
+    fontWeight: '600',
   },
-  activityCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+  healthMetaDivider: {
+    width: 1,
+    height: 12,
+    backgroundColor: colors.border,
+    marginHorizontal: 10,
   },
-  activityItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+  ringScore: {
+    fontSize: 28,
+    fontWeight: '800',
+    letterSpacing: -1,
   },
-  activityIcon: {
-    width: 40,
-    height: 40,
+  ringLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+    fontWeight: '600',
+  },
+
+  // Countdown
+  countdownCard: {
+    width: 110,
+    backgroundColor: colors.bloodRedLight,
     borderRadius: 20,
+    padding: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    borderWidth: 1,
+    borderColor: colors.bloodRed + '20',
   },
-  activityContent: {
-    flex: 1,
+  countdownHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 4,
   },
-  activityTitle: {
-    fontSize: 16,
+  countdownTitle: {
+    fontSize: 9,
+    color: colors.bloodRed,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+  },
+  countdownValue: {
+    fontSize: 36,
+    fontWeight: '800',
+    color: colors.bloodRed,
+    letterSpacing: -2,
+  },
+  countdownUnit: {
+    fontSize: 11,
+    color: colors.textMuted,
+    marginTop: -4,
+    marginBottom: 4,
+  },
+  countdownDate: {
+    fontSize: 10,
+    color: colors.textSecondary,
+    fontWeight: '500',
+    marginBottom: 6,
+  },
+  countdownStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.successGlow,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  statusDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: colors.success,
+  },
+  statusText: {
+    fontSize: 9,
+    color: colors.success,
     fontWeight: '600',
-    color: '#111827',
   },
-  activityTime: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginTop: 2,
+
+  // Vitals
+  vitalsRow: {
+    gap: 10,
   },
-  metricsGrid: {
+  vitalMini: {
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 12,
+    alignItems: 'center',
+    minWidth: 75,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  vitalMiniIcon: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  vitalMiniValue: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  vitalMiniUnit: {
+    fontSize: 10,
+    color: colors.textMuted,
+    marginTop: 1,
+  },
+  trendBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+
+  // Alert
+  alertCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.errorGlow,
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.error + '20',
+  },
+  alertIconPulse: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.error + '20',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  alertContent: {
+    flex: 1,
+    marginHorizontal: 12,
+  },
+  alertTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.error,
+    marginBottom: 2,
+  },
+  alertMessage: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    lineHeight: 15,
+  },
+  alertAction: {
+    backgroundColor: colors.error,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  alertActionText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#fff',
+  },
+
+  // Actions
+  actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  metricCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-    position: 'relative',
-  },
-  metricValue: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  metricUnit: {
-    fontSize: 14,
-    color: '#6B7280',
+    gap: 10,
     marginTop: 4,
   },
-  metricLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#4B5563',
-    marginTop: 8,
+  actionPill: {
+    width: (width - 60) / 3,
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 12,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.border,
   },
-  trendIndicator: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+  actionPillUrgent: {
+    backgroundColor: colors.bloodRedLight,
+    borderColor: colors.bloodRed + '20',
+  },
+  actionPillIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 6,
+  },
+  actionPillLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+
+  // Insights
+  insightCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  insightIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  insightContent: {
+    flex: 1,
+    marginHorizontal: 10,
+  },
+  insightTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 1,
+  },
+  insightMessage: {
+    fontSize: 11,
+    color: colors.textMuted,
+    lineHeight: 14,
+  },
+
+  // Blood Card
+  bloodCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 14,
+    padding: 14,
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  bloodCardIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: colors.bloodRedLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  bloodCardInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  bloodCardLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+  },
+  bloodCardValue: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  bloodCardTag: {
+    backgroundColor: colors.bloodRed,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  bloodCardTagText: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#fff',
   },
 });

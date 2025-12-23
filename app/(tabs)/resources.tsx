@@ -1,209 +1,366 @@
+import { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BookOpen, Play, Users, ExternalLink, Download, Star } from 'lucide-react-native';
+import {
+  BookOpen,
+  Play,
+  Users,
+  ExternalLink,
+  Download,
+  Star,
+  Search,
+  Clock,
+  Heart,
+  DollarSign,
+  Building2,
+  Phone,
+  Globe,
+  ChevronRight,
+  Shield,
+  Utensils,
+  Dumbbell,
+  Brain,
+} from 'lucide-react-native';
+import Header from '@/components/Header';
+import { colors, layout } from '@/constants/theme';
+import { articles, videos, supportGroups, financialSchemes, emergencyContacts } from '@/constants/data';
 
-export default function Resources() {
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
-        <LinearGradient
-          colors={['#F59E0B', '#D97706']}
-          style={styles.header}
-        >
-          <Text style={styles.headerTitle}>Learn & Connect</Text>
-          <Text style={styles.headerSubtitle}>Educational resources and community support</Text>
-        </LinearGradient>
+type TabType = 'guides' | 'videos' | 'community' | 'help';
 
-        {/* Featured Articles */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Featured Articles</Text>
-          
-          <View style={styles.articleCard}>
+export default function Learn() {
+  const [activeTab, setActiveTab] = useState<TabType>('guides');
+
+  const tabs: { key: TabType; label: string; icon: any }[] = [
+    { key: 'guides', label: 'Guides', icon: BookOpen },
+    { key: 'videos', label: 'Videos', icon: Play },
+    { key: 'community', label: 'Community', icon: Users },
+    { key: 'help', label: 'Help', icon: Heart },
+  ];
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case 'treatment':
+        return Shield;
+      case 'nutrition':
+        return Utensils;
+      case 'lifestyle':
+        return Dumbbell;
+      case 'mental-health':
+        return Brain;
+      default:
+        return BookOpen;
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'treatment':
+        return '#3B82F6';
+      case 'nutrition':
+        return '#10B981';
+      case 'lifestyle':
+        return '#F59E0B';
+      case 'mental-health':
+        return '#8B5CF6';
+      default:
+        return colors.primary;
+    }
+  };
+
+  const renderGuides = () => (
+    <View style={styles.tabContent}>
+      {/* Quick Topics */}
+      <View style={styles.quickTopics}>
+        <Text style={styles.subsectionTitle}>Quick Topics</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {[
+            { label: 'Transfusions', color: '#DC2626' },
+            { label: 'Iron Overload', color: '#F59E0B' },
+            { label: 'Nutrition', color: '#10B981' },
+            { label: 'Exercise', color: '#3B82F6' },
+            { label: 'Mental Health', color: '#8B5CF6' },
+          ].map((topic, index) => (
+            <Pressable
+              key={index}
+              style={[styles.topicChip, { backgroundColor: topic.color + '15' }]}
+            >
+              <Text style={[styles.topicText, { color: topic.color }]}>{topic.label}</Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Featured Articles */}
+      <Text style={styles.subsectionTitle}>Featured Articles</Text>
+      {articles.map(article => {
+        const CategoryIcon = getCategoryIcon(article.category);
+        const categoryColor = getCategoryColor(article.category);
+
+        return (
+          <Pressable key={article.id} style={styles.articleCard}>
+            <View style={[styles.articleIcon, { backgroundColor: categoryColor + '15' }]}>
+              <CategoryIcon size={24} color={categoryColor} />
+            </View>
             <View style={styles.articleContent}>
-              <Text style={styles.articleTitle}>Understanding Your Blood Test Results</Text>
-              <Text style={styles.articleExcerpt}>
-                Learn how to interpret hemoglobin, ferritin, and other key markers in thalassemia management.
+              <Text style={styles.articleTitle}>{article.title}</Text>
+              <Text style={styles.articleExcerpt} numberOfLines={2}>
+                {article.content}
               </Text>
               <View style={styles.articleMeta}>
-                <View style={styles.rating}>
-                  <Star size={16} color="#F59E0B" />
-                  <Text style={styles.ratingText}>4.8</Text>
+                <View style={styles.metaItem}>
+                  <Clock size={12} color={colors.textMuted} />
+                  <Text style={styles.metaText}>{article.readTime}</Text>
                 </View>
-                <Text style={styles.readTime}>5 min read</Text>
+                {article.rating && (
+                  <View style={styles.metaItem}>
+                    <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                    <Text style={styles.metaText}>{article.rating}</Text>
+                  </View>
+                )}
               </View>
             </View>
-            <Pressable style={styles.readButton}>
-              <BookOpen size={16} color="#FFFFFF" />
-              <Text style={styles.readButtonText}>Read</Text>
+            <ChevronRight size={20} color={colors.textMuted} />
+          </Pressable>
+        );
+      })}
+
+      {/* Quick Downloads */}
+      <Text style={styles.subsectionTitle}>Quick Downloads</Text>
+      <View style={styles.downloadsGrid}>
+        {[
+          { label: 'Medication Tracker', icon: Download, color: '#10B981' },
+          { label: 'Emergency Card', icon: Shield, color: '#DC2626' },
+          { label: 'Lab Results Log', icon: BookOpen, color: '#3B82F6' },
+          { label: 'Dietary Guide', icon: Utensils, color: '#F59E0B' },
+        ].map((item, index) => (
+          <Pressable key={index} style={styles.downloadCard}>
+            <View style={[styles.downloadIcon, { backgroundColor: item.color + '15' }]}>
+              <item.icon size={20} color={item.color} />
+            </View>
+            <Text style={styles.downloadLabel}>{item.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </View>
+  );
+
+  const renderVideos = () => (
+    <View style={styles.tabContent}>
+      <Text style={styles.subsectionTitle}>Video Library</Text>
+      <View style={styles.videoGrid}>
+        {videos.map(video => (
+          <Pressable key={video.id} style={styles.videoCard}>
+            <View style={styles.videoThumbnail}>
+              <View style={styles.playButton}>
+                <Play size={24} color="#FFFFFF" fill="#FFFFFF" />
+              </View>
+              <View style={styles.durationBadge}>
+                <Text style={styles.durationText}>{video.duration}</Text>
+              </View>
+            </View>
+            <View style={styles.videoInfo}>
+              <Text style={styles.videoTitle} numberOfLines={2}>{video.title}</Text>
+              <Text style={styles.videoAuthor}>{video.author}</Text>
+              <View style={styles.videoStats}>
+                <Text style={styles.viewCount}>{video.views} views</Text>
+                {video.rating && (
+                  <View style={styles.ratingBadge}>
+                    <Star size={10} color="#F59E0B" fill="#F59E0B" />
+                    <Text style={styles.ratingValue}>{video.rating}</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          </Pressable>
+        ))}
+      </View>
+
+      {/* Watch More */}
+      <Pressable style={styles.watchMoreButton}>
+        <Text style={styles.watchMoreText}>Browse All Videos</Text>
+        <ExternalLink size={16} color={colors.primary} />
+      </Pressable>
+    </View>
+  );
+
+  const renderCommunity = () => (
+    <View style={styles.tabContent}>
+      {/* Support Groups */}
+      <Text style={styles.subsectionTitle}>Support Groups</Text>
+      {supportGroups.map(group => (
+        <View key={group.id} style={styles.groupCard}>
+          <View style={styles.groupHeader}>
+            <View style={[styles.groupIcon, { backgroundColor: colors.primary + '15' }]}>
+              <Users size={20} color={colors.primary} />
+            </View>
+            <View style={styles.groupInfo}>
+              <Text style={styles.groupName}>{group.name}</Text>
+              <Text style={styles.groupType}>{group.type === 'online' ? 'Online Group' : 'Local Group'}</Text>
+            </View>
+            <View style={styles.membersBadge}>
+              <Text style={styles.membersCount}>{group.members}</Text>
+              <Text style={styles.membersLabel}>members</Text>
+            </View>
+          </View>
+          <Text style={styles.groupDescription}>{group.description}</Text>
+          <View style={styles.groupFooter}>
+            {group.meetingTime && (
+              <View style={styles.meetingInfo}>
+                <Clock size={14} color={colors.textMuted} />
+                <Text style={styles.meetingText}>{group.meetingTime}</Text>
+              </View>
+            )}
+            <Pressable style={styles.joinBtn}>
+              <Text style={styles.joinBtnText}>Join</Text>
             </Pressable>
           </View>
+        </View>
+      ))}
 
-          <View style={styles.articleCard}>
-            <View style={styles.articleContent}>
-              <Text style={styles.articleTitle}>Iron Chelation Therapy: What You Need to Know</Text>
-              <Text style={styles.articleExcerpt}>
-                A comprehensive guide to iron chelation treatment, side effects, and monitoring.
+      {/* Forum Discussions */}
+      <Text style={styles.subsectionTitle}>Recent Discussions</Text>
+      <View style={styles.forumCard}>
+        {[
+          { title: 'Best practices for iron chelation', replies: 24, time: '2h ago' },
+          { title: 'Managing fatigue during treatment', replies: 18, time: '5h ago' },
+          { title: 'Preparing for blood transfusions', replies: 31, time: '1d ago' },
+        ].map((thread, index) => (
+          <Pressable key={index} style={styles.forumThread}>
+            <View style={styles.threadContent}>
+              <Text style={styles.threadTitle}>{thread.title}</Text>
+              <Text style={styles.threadMeta}>{thread.replies} replies • {thread.time}</Text>
+            </View>
+            <ChevronRight size={18} color={colors.textMuted} />
+          </Pressable>
+        ))}
+        <Pressable style={styles.viewAllBtn}>
+          <Text style={styles.viewAllText}>View All Discussions</Text>
+        </Pressable>
+      </View>
+
+      {/* Helplines */}
+      <Text style={styles.subsectionTitle}>24/7 Helplines</Text>
+      <View style={styles.helplineCard}>
+        <View style={styles.helplineHeader}>
+          <Phone size={20} color={colors.primary} />
+          <Text style={styles.helplineTitle}>Thalassemia Support Line</Text>
+        </View>
+        <Text style={styles.helplineNumber}>1800-XXX-XXXX</Text>
+        <Text style={styles.helplineNote}>Free, confidential support available 24/7</Text>
+        <Pressable style={styles.callNowBtn}>
+          <Phone size={16} color="#FFFFFF" />
+          <Text style={styles.callNowText}>Call Now</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+
+  const renderHelp = () => (
+    <View style={styles.tabContent}>
+      {/* Financial Assistance */}
+      <Text style={styles.subsectionTitle}>Financial Assistance</Text>
+      {financialSchemes.map(scheme => (
+        <View key={scheme.id} style={styles.schemeCard}>
+          <View style={styles.schemeHeader}>
+            <View style={[styles.schemeIcon, { backgroundColor: '#10B981' + '15' }]}>
+              <DollarSign size={20} color="#10B981" />
+            </View>
+            <View style={styles.schemeInfo}>
+              <Text style={styles.schemeName}>{scheme.name}</Text>
+              <Text style={styles.schemeProvider}>{scheme.provider}</Text>
+            </View>
+          </View>
+          <Text style={styles.schemeDescription}>{scheme.description}</Text>
+          <View style={styles.schemeCoverage}>
+            <Text style={styles.coverageLabel}>Coverage:</Text>
+            <Text style={styles.coverageValue}>{scheme.coverage}</Text>
+          </View>
+          <View style={styles.schemeFooter}>
+            <View style={styles.eligibilityBadge}>
+              <Text style={styles.eligibilityText}>
+                {scheme.eligibility ? 'You may qualify' : 'Check eligibility'}
               </Text>
-              <View style={styles.articleMeta}>
-                <View style={styles.rating}>
-                  <Star size={16} color="#F59E0B" />
-                  <Text style={styles.ratingText}>4.6</Text>
-                </View>
-                <Text style={styles.readTime}>8 min read</Text>
-              </View>
             </View>
-            <Pressable style={styles.readButton}>
-              <BookOpen size={16} color="#FFFFFF" />
-              <Text style={styles.readButtonText}>Read</Text>
+            <Pressable style={styles.applyBtn}>
+              <Text style={styles.applyBtnText}>Learn More</Text>
+              <ExternalLink size={14} color={colors.primary} />
             </Pressable>
           </View>
         </View>
+      ))}
 
-        {/* Video Library */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Video Library</Text>
-          
-          <View style={styles.videoGrid}>
-            <View style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Play size={32} color="#FFFFFF" />
+      {/* Emergency Contacts */}
+      <Text style={styles.subsectionTitle}>Emergency Contacts</Text>
+      {emergencyContacts.slice(0, 3).map(contact => (
+        <View key={contact.id} style={styles.contactCard}>
+          <View style={styles.contactInfo}>
+            <Text style={styles.contactName}>{contact.name}</Text>
+            <Text style={styles.contactNumber}>{contact.phone}</Text>
+            {contact.available24x7 && (
+              <View style={styles.availableBadge}>
+                <Text style={styles.availableText}>24/7 Available</Text>
               </View>
-              <Text style={styles.videoTitle}>Living Well with Thalassemia</Text>
-              <Text style={styles.videoDuration}>12:30</Text>
-            </View>
-            
-            <View style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Play size={32} color="#FFFFFF" />
-              </View>
-              <Text style={styles.videoTitle}>Medication Management Tips</Text>
-              <Text style={styles.videoDuration}>8:45</Text>
-            </View>
-            
-            <View style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Play size={32} color="#FFFFFF" />
-              </View>
-              <Text style={styles.videoTitle}>Exercise and Thalassemia</Text>
-              <Text style={styles.videoDuration}>15:20</Text>
-            </View>
-            
-            <View style={styles.videoCard}>
-              <View style={styles.videoThumbnail}>
-                <Play size={32} color="#FFFFFF" />
-              </View>
-              <Text style={styles.videoTitle}>Nutrition Guidelines</Text>
-              <Text style={styles.videoDuration}>10:15</Text>
-            </View>
+            )}
           </View>
-        </View>
-
-        {/* Community Support */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Community Support</Text>
-          
-          <View style={styles.communityCard}>
-            <View style={styles.communityHeader}>
-              <Users size={24} color="#7C3AED" />
-              <Text style={styles.communityTitle}>Thalassemia Support Group</Text>
-            </View>
-            <Text style={styles.communityDescription}>
-              Connect with other patients and caregivers. Share experiences, ask questions, and find support.
-            </Text>
-            <View style={styles.communityStats}>
-              <Text style={styles.memberCount}>2,847 members</Text>
-              <Text style={styles.activityCount}>156 active today</Text>
-            </View>
-            <Pressable style={styles.joinButton}>
-              <Users size={16} color="#FFFFFF" />
-              <Text style={styles.joinButtonText}>Join Community</Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.forumsCard}>
-            <Text style={styles.forumsTitle}>Recent Forum Discussions</Text>
-            
-            <View style={styles.forumItem}>
-              <Text style={styles.forumTitle}>Best practices for iron chelation</Text>
-              <Text style={styles.forumMeta}>24 replies • 2 hours ago</Text>
-            </View>
-            
-            <View style={styles.forumItem}>
-              <Text style={styles.forumTitle}>Managing fatigue during treatment</Text>
-              <Text style={styles.forumMeta}>18 replies • 5 hours ago</Text>
-            </View>
-            
-            <View style={styles.forumItem}>
-              <Text style={styles.forumTitle}>Preparing for blood transfusions</Text>
-              <Text style={styles.forumMeta}>31 replies • 1 day ago</Text>
-            </View>
-            
-            <Pressable style={styles.viewAllButton}>
-              <Text style={styles.viewAllText}>View All Discussions</Text>
-              <ExternalLink size={16} color="#2563EB" />
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Quick Resources */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Resources</Text>
-          
-          <View style={styles.resourcesGrid}>
-            <Pressable style={styles.resourceCard}>
-              <Download size={24} color="#059669" />
-              <Text style={styles.resourceTitle}>Medication Tracker</Text>
-              <Text style={styles.resourceSubtitle}>PDF template</Text>
-            </Pressable>
-            
-            <Pressable style={styles.resourceCard}>
-              <Download size={24} color="#DC2626" />
-              <Text style={styles.resourceTitle}>Emergency Card</Text>
-              <Text style={styles.resourceSubtitle}>Medical ID</Text>
-            </Pressable>
-            
-            <Pressable style={styles.resourceCard}>
-              <Download size={24} color="#7C3AED" />
-              <Text style={styles.resourceTitle}>Lab Results Log</Text>
-              <Text style={styles.resourceSubtitle}>Tracking sheet</Text>
-            </Pressable>
-            
-            <Pressable style={styles.resourceCard}>
-              <Download size={24} color="#F59E0B" />
-              <Text style={styles.resourceTitle}>Dietary Guide</Text>
-              <Text style={styles.resourceSubtitle}>Nutrition tips</Text>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Healthcare Provider Directory */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Find Specialists</Text>
-          
-          <View style={styles.directoryCard}>
-            <Text style={styles.directoryTitle}>Thalassemia Treatment Centers</Text>
-            <Text style={styles.directoryDescription}>
-              Find specialized healthcare providers and treatment centers near you.
-            </Text>
-            <Pressable style={styles.searchButton}>
-              <Text style={styles.searchButtonText}>Search by Location</Text>
-              <ExternalLink size={16} color="#FFFFFF" />
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Emergency Information */}
-        <View style={styles.emergencySection}>
-          <Text style={styles.emergencyTitle}>Emergency Information</Text>
-          <Text style={styles.emergencyText}>
-            Important information to share with healthcare providers in emergency situations.
-          </Text>
-          <Pressable style={styles.emergencyButton}>
-            <Text style={styles.emergencyButtonText}>View Emergency Card</Text>
+          <Pressable style={styles.contactBtn}>
+            <Phone size={18} color="#FFFFFF" />
           </Pressable>
         </View>
+      ))}
+
+      {/* Find Treatment Centers */}
+      <Text style={styles.subsectionTitle}>Find Care</Text>
+      <View style={styles.findCareCard}>
+        <Building2 size={32} color={colors.primary} />
+        <Text style={styles.findCareTitle}>Thalassemia Treatment Centers</Text>
+        <Text style={styles.findCareText}>
+          Find specialized healthcare providers and treatment centers near you
+        </Text>
+        <Pressable style={styles.findCareBtn}>
+          <Globe size={16} color="#FFFFFF" />
+          <Text style={styles.findCareBtnText}>Search Nearby</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+
+  return (
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <Header
+        title="Learn"
+        subtitle="Resources & Support"
+        icon={Search}
+      />
+
+      {/* Tab Bar */}
+      <View style={styles.tabBar}>
+        {tabs.map(tab => {
+          const isActive = activeTab === tab.key;
+          const TabIcon = tab.icon;
+          return (
+            <Pressable
+              key={tab.key}
+              style={[styles.tab, isActive && styles.tabActive]}
+              onPress={() => setActiveTab(tab.key)}
+            >
+              <TabIcon size={18} color={isActive ? colors.primary : colors.textMuted} />
+              <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
+                {tab.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {activeTab === 'guides' && renderGuides()}
+        {activeTab === 'videos' && renderVideos()}
+        {activeTab === 'community' && renderCommunity()}
+        {activeTab === 'help' && renderHelp()}
       </ScrollView>
     </SafeAreaView>
   );
@@ -212,101 +369,147 @@ export default function Resources() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: layout.scrollContentPadding,
   },
-  header: {
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#FFFFFF',
-    textAlign: 'center',
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#FEF3C7',
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  section: {
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
     marginHorizontal: 20,
-    marginTop: 24,
+    marginTop: 16,
+    borderRadius: 12,
+    padding: 4,
   },
-  sectionTitle: {
-    fontSize: 20,
+  tab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  tabActive: {
+    backgroundColor: colors.primaryLight + '30',
+  },
+  tabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textMuted,
+    marginLeft: 6,
+  },
+  tabTextActive: {
+    color: colors.primary,
+  },
+  tabContent: {
+    paddingHorizontal: 20,
+  },
+  subsectionTitle: {
+    fontSize: 18,
     fontWeight: '700',
-    color: '#111827',
-    marginBottom: 16,
+    color: colors.textPrimary,
+    marginTop: 24,
+    marginBottom: 12,
   },
+  // Quick Topics
+  quickTopics: {
+    marginTop: 8,
+  },
+  topicChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 8,
+  },
+  topicText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  // Articles
   articleCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowRadius: 4,
+    elevation: 1,
+  },
+  articleIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   articleContent: {
     flex: 1,
-    marginRight: 16,
+    marginLeft: 12,
+    marginRight: 8,
   },
   articleTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 4,
   },
   articleExcerpt: {
-    fontSize: 14,
-    color: '#6B7280',
-    lineHeight: 20,
-    marginBottom: 12,
+    fontSize: 13,
+    color: colors.textMuted,
+    lineHeight: 18,
+    marginBottom: 8,
   },
   articleMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
   },
-  rating: {
+  metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    marginRight: 12,
   },
-  ratingText: {
-    fontSize: 14,
-    color: '#F59E0B',
-    fontWeight: '600',
-  },
-  readTime: {
+  metaText: {
     fontSize: 12,
-    color: '#9CA3AF',
+    color: colors.textMuted,
+    marginLeft: 4,
   },
-  readButton: {
-    backgroundColor: '#2563EB',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
+  // Downloads
+  downloadsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  downloadCard: {
+    width: '48%',
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 16,
     alignItems: 'center',
-    gap: 8,
+    marginBottom: 12,
   },
-  readButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+  downloadIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  downloadLabel: {
+    fontSize: 13,
     fontWeight: '600',
+    color: colors.textPrimary,
+    textAlign: 'center',
   },
+  // Videos
   videoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -314,233 +517,403 @@ const styles = StyleSheet.create({
   },
   videoCard: {
     width: '48%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    overflow: 'hidden',
   },
   videoThumbnail: {
-    height: 100,
-    backgroundColor: '#374151',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    height: 90,
+    backgroundColor: '#1F2937',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  playButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  durationBadge: {
+    position: 'absolute',
+    bottom: 6,
+    right: 6,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  durationText: {
+    fontSize: 11,
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  videoInfo: {
+    padding: 12,
+  },
   videoTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  videoAuthor: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginBottom: 6,
+  },
+  videoStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  viewCount: {
+    fontSize: 11,
+    color: colors.textMuted,
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingValue: {
+    fontSize: 11,
+    color: '#F59E0B',
+    marginLeft: 3,
+    fontWeight: '600',
+  },
+  watchMoreButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    marginTop: 8,
+  },
+  watchMoreText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
-    padding: 12,
-    paddingBottom: 8,
+    color: colors.primary,
+    marginRight: 6,
   },
-  videoDuration: {
-    fontSize: 12,
-    color: '#6B7280',
-    paddingHorizontal: 12,
-    paddingBottom: 12,
-  },
-  communityCard: {
-    backgroundColor: '#FFFFFF',
+  // Groups
+  groupCard: {
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 3,
+    padding: 16,
+    marginBottom: 12,
   },
-  communityHeader: {
+  groupHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
   },
-  communityTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#111827',
-    marginLeft: 8,
-  },
-  communityDescription: {
-    fontSize: 14,
-    color: '#6B7280',
-    lineHeight: 20,
-    marginBottom: 16,
-  },
-  communityStats: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 20,
-    marginBottom: 16,
-  },
-  memberCount: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-  },
-  activityCount: {
-    fontSize: 14,
-    color: '#059669',
-    fontWeight: '600',
-  },
-  joinButton: {
-    backgroundColor: '#7C3AED',
-    paddingVertical: 12,
-    borderRadius: 8,
-    flexDirection: 'row',
+  groupIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
   },
-  joinButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '600',
+  groupInfo: {
+    flex: 1,
+    marginLeft: 12,
   },
-  forumsCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  forumsTitle: {
+  groupName: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#111827',
-    marginBottom: 16,
+    color: colors.textPrimary,
   },
-  forumItem: {
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+  groupType: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginTop: 2,
   },
-  forumTitle: {
+  membersBadge: {
+    alignItems: 'center',
+  },
+  membersCount: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  membersLabel: {
+    fontSize: 11,
+    color: colors.textMuted,
+  },
+  groupDescription: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 4,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginBottom: 12,
   },
-  forumMeta: {
-    fontSize: 12,
-    color: '#9CA3AF',
-  },
-  viewAllButton: {
+  groupFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 16,
-    gap: 8,
+    justifyContent: 'space-between',
+  },
+  meetingInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  meetingText: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginLeft: 6,
+  },
+  joinBtn: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  joinBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  // Forum
+  forumCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  forumThread: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  threadContent: {
+    flex: 1,
+  },
+  threadTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  threadMeta: {
+    fontSize: 12,
+    color: colors.textMuted,
+  },
+  viewAllBtn: {
+    paddingVertical: 14,
+    alignItems: 'center',
   },
   viewAllText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#2563EB',
+    color: colors.primary,
   },
-  resourcesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  resourceCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  resourceTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111827',
-    marginTop: 8,
-    textAlign: 'center',
-  },
-  resourceSubtitle: {
-    fontSize: 12,
-    color: '#6B7280',
-    marginTop: 4,
-  },
-  directoryCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+  // Helpline
+  helplineCard: {
+    backgroundColor: colors.primaryLight + '15',
+    borderRadius: 16,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: colors.primaryLight + '30',
   },
-  directoryTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#111827',
+  helplineHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  directoryDescription: {
-    fontSize: 14,
-    color: '#6B7280',
-    lineHeight: 20,
+  helplineTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.primary,
+    marginLeft: 8,
+  },
+  helplineNumber: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: colors.textPrimary,
+    marginBottom: 4,
+  },
+  helplineNote: {
+    fontSize: 13,
+    color: colors.textMuted,
     marginBottom: 16,
   },
-  searchButton: {
-    backgroundColor: '#2563EB',
-    paddingVertical: 12,
-    borderRadius: 8,
+  callNowBtn: {
     flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+  callNowText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    marginLeft: 8,
+  },
+  // Schemes
+  schemeCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+  },
+  schemeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  schemeIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
   },
-  searchButtonText: {
-    color: '#FFFFFF',
+  schemeInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  schemeName: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.textPrimary,
+  },
+  schemeProvider: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginTop: 2,
+  },
+  schemeDescription: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  schemeCoverage: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    backgroundColor: colors.background,
+    padding: 10,
+    borderRadius: 8,
+  },
+  coverageLabel: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginRight: 8,
+  },
+  coverageValue: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#10B981',
+    flex: 1,
   },
-  emergencySection: {
-    backgroundColor: '#FEF2F2',
-    marginHorizontal: 20,
-    marginTop: 24,
-    padding: 20,
+  schemeFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  eligibilityBadge: {
+    backgroundColor: '#D1FAE5',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
+  eligibilityText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#059669',
+  },
+  applyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  applyBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.primary,
+    marginRight: 4,
+  },
+  // Contacts
+  contactCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  contactInfo: {
+    flex: 1,
+  },
+  contactName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.textPrimary,
+    marginBottom: 2,
+  },
+  contactNumber: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  availableBadge: {
+    backgroundColor: '#D1FAE5',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+    marginTop: 6,
+  },
+  availableText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#059669',
+  },
+  contactBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  // Find Care
+  findCareCard: {
+    backgroundColor: colors.surface,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#FECACA',
+    padding: 24,
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  emergencyTitle: {
+  findCareTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#DC2626',
+    color: colors.textPrimary,
+    marginTop: 12,
     marginBottom: 8,
   },
-  emergencyText: {
+  findCareText: {
     fontSize: 14,
-    color: '#7F1D1D',
+    color: colors.textMuted,
+    textAlign: 'center',
     lineHeight: 20,
     marginBottom: 16,
   },
-  emergencyButton: {
-    backgroundColor: '#DC2626',
-    paddingVertical: 12,
-    borderRadius: 8,
+  findCareBtn: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 10,
   },
-  emergencyButtonText: {
-    color: '#FFFFFF',
+  findCareBtnText: {
     fontSize: 14,
     fontWeight: '600',
+    color: '#FFFFFF',
+    marginLeft: 8,
   },
 });
