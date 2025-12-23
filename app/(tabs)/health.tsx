@@ -273,7 +273,7 @@ export default function Health() {
   const medProgress = totalMeds > 0 ? takenCount / totalMeds : 0;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={[]}>
       <Header title="Health" subtitle="Track your wellness" compact />
 
       {/* Modern Pill Tab Navigation */}

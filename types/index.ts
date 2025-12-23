@@ -13,7 +13,13 @@ export interface Patient {
   diagnosis: DiagnosisType;
   diagnosisDate: string;
   dateOfBirth: string;
+  age: number;
   primaryDoctor: Doctor;
+  emergencyContact: {
+    name: string;
+    relationship: string;
+    phone: string;
+  };
   allergies: string[];
 }
 

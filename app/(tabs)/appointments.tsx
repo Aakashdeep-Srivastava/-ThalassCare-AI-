@@ -142,7 +142,7 @@ export default function Schedule() {
   const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={[]}>
       <Header title="Schedule" subtitle="Transfusions & Appointments" compact />
 
       <ScrollView

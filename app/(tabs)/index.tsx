@@ -131,7 +131,7 @@ export default function Dashboard() {
   const regularInsights = aiInsights.filter(i => i.type !== 'alert').slice(0, 2);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={[]}>
       <Header
         title={`${getGreeting()}`}
         subtitle={patient.name.split(' ')[0]}

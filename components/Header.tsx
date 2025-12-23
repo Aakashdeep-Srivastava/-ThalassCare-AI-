@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Platform, StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LucideIcon } from 'lucide-react-native';
 import { colors } from '@/constants/theme';
 
@@ -24,9 +25,12 @@ export default function Header({
   rightIcons,
   compact = false
 }: HeaderProps) {
+  const insets = useSafeAreaInsets();
+  const statusBarHeight = Platform.OS === 'android' ? StatusBar.currentHeight || 0 : insets.top;
+
   if (compact) {
     return (
-      <View style={styles.compactHeader}>
+      <View style={[styles.compactHeader, { paddingTop: statusBarHeight + 10 }]}>
         <View>
           <Text style={styles.compactTitle}>{title}</Text>
           {subtitle && <Text style={styles.compactSubtitle}>{subtitle}</Text>}
@@ -48,7 +52,7 @@ export default function Header({
   }
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingTop: statusBarHeight + 8 }]}>
       <View style={styles.headerContent}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{title}</Text>

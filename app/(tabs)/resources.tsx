@@ -325,7 +325,7 @@ export default function Learn() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={styles.container} edges={[]}>
       <Header
         title="Learn"
         subtitle="Resources & Support"

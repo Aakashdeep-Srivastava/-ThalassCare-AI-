@@ -39,7 +39,13 @@ export const patientData: Patient = {
   diagnosis: 'Beta Thalassemia Major',
   diagnosisDate: '2019-03-15',
   dateOfBirth: '2012-06-20',
+  age: 12,
   primaryDoctor: primaryDoctor,
+  emergencyContact: {
+    name: 'Vikram Patel',
+    relationship: 'Father',
+    phone: '+91 98765 00001',
+  },
   allergies: ['Penicillin'],
 };
 
