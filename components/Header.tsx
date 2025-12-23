@@ -2,15 +2,28 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { LucideIcon } from 'lucide-react-native';
 import { colors } from '@/constants/theme';
 
+interface HeaderIcon {
+  icon: LucideIcon;
+  onPress?: () => void;
+}
+
 interface HeaderProps {
   title: string;
   subtitle?: string;
   icon?: LucideIcon;
   onIconPress?: () => void;
+  rightIcons?: HeaderIcon[];
   compact?: boolean;
 }
 
-export default function Header({ title, subtitle, icon: Icon, onIconPress, compact = false }: HeaderProps) {
+export default function Header({
+  title,
+  subtitle,
+  icon: Icon,
+  onIconPress,
+  rightIcons,
+  compact = false
+}: HeaderProps) {
   if (compact) {
     return (
       <View style={styles.compactHeader}>
@@ -18,11 +31,18 @@ export default function Header({ title, subtitle, icon: Icon, onIconPress, compa
           <Text style={styles.compactTitle}>{title}</Text>
           {subtitle && <Text style={styles.compactSubtitle}>{subtitle}</Text>}
         </View>
-        {Icon && (
-          <Pressable style={styles.compactIconButton} onPress={onIconPress}>
-            <Icon size={20} color="#FFFFFF" />
-          </Pressable>
-        )}
+        <View style={styles.iconRow}>
+          {rightIcons?.map((item, index) => (
+            <Pressable key={index} style={styles.compactIconButton} onPress={item.onPress}>
+              <item.icon size={20} color="#FFFFFF" />
+            </Pressable>
+          ))}
+          {Icon && (
+            <Pressable style={styles.compactIconButton} onPress={onIconPress}>
+              <Icon size={20} color="#FFFFFF" />
+            </Pressable>
+          )}
+        </View>
       </View>
     );
   }
@@ -34,13 +54,22 @@ export default function Header({ title, subtitle, icon: Icon, onIconPress, compa
           <Text style={styles.title}>{title}</Text>
           {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
         </View>
-        {Icon && (
-          <Pressable style={styles.iconButton} onPress={onIconPress}>
-            <View style={styles.iconGlow}>
-              <Icon size={22} color="#FFFFFF" />
-            </View>
-          </Pressable>
-        )}
+        <View style={styles.iconRow}>
+          {rightIcons?.map((item, index) => (
+            <Pressable key={index} style={styles.iconButton} onPress={item.onPress}>
+              <View style={styles.iconGlow}>
+                <item.icon size={22} color="#FFFFFF" />
+              </View>
+            </Pressable>
+          ))}
+          {Icon && (
+            <Pressable style={styles.iconButton} onPress={onIconPress}>
+              <View style={styles.iconGlow}>
+                <Icon size={22} color="#FFFFFF" />
+              </View>
+            </Pressable>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -72,8 +101,13 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
     marginTop: 2,
   },
+  iconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   iconButton: {
-    marginLeft: 16,
+    marginLeft: 4,
   },
   iconGlow: {
     width: 42,

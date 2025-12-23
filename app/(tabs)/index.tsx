@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle } from 'react-native-svg';
 import {
@@ -17,6 +18,7 @@ import {
   Wind,
   ChevronRight,
   Sparkles,
+  Gamepad2,
 } from 'lucide-react-native';
 import Header from '@/components/Header';
 import { usePatient } from '@/context/PatientContext';
@@ -101,6 +103,7 @@ function ActionPill({ icon: Icon, label, color, urgent }: any) {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
   const {
     patient,
     daysUntilTransfusion,
@@ -125,6 +128,9 @@ export default function Dashboard() {
       <Header
         title={`${getGreeting()}`}
         subtitle={patient.name.split(' ')[0]}
+        rightIcons={[
+          { icon: Gamepad2, onPress: () => router.push('/games') },
+        ]}
         icon={Bell}
       />
 
