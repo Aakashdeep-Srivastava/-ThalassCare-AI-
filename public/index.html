@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <!-- Primary Meta Tags -->
+  <title>ThalassCare AI - Thalassemia Care Management</title>
+  <meta name="title" content="ThalassCare AI - Thalassemia Care Management">
+  <meta name="description" content="AI-powered thalassemia care management for patients. Track health, manage transfusions, and connect with community.">
+  <meta name="keywords" content="thalassemia, blood disorder, health tracking, transfusion, patient care, medical app">
+  <meta name="author" content="ThalassCare AI">
+
+  <!-- Theme Color for browsers -->
+  <meta name="theme-color" content="#14B8A6">
+  <meta name="msapplication-TileColor" content="#14B8A6">
+  <meta name="msapplication-navbutton-color" content="#14B8A6">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- PWA Meta Tags -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ThalassCare">
+  <meta name="application-name" content="ThalassCare AI">
+
+  <!-- Icons -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="mask-icon" href="/icon-512.png" color="#14B8A6">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="/manifest.json">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thalasscare.ai/">
+  <meta property="og:title" content="ThalassCare AI - Thalassemia Care Management">
+  <meta property="og:description" content="AI-powered thalassemia care management for patients. Track health, manage transfusions, and connect with community.">
+  <meta property="og:image" content="/icon-512.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://thalasscare.ai/">
+  <meta property="twitter:title" content="ThalassCare AI - Thalassemia Care Management">
+  <meta property="twitter:description" content="AI-powered thalassemia care management for patients. Track health, manage transfusions, and connect with community.">
+  <meta property="twitter:image" content="/icon-512.png">
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Splash screens for iOS -->
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <style>
+    /* Critical CSS for initial load */
+    html, body, #root {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background-color: #F8FAFC;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Safe area padding for notched devices */
+    body {
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    /* Loading state */
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+    }
+
+    .loading-logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 24px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .loading-text {
+      color: white;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .loading-subtext {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 14px;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      margin-top: 32px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <!-- Loading state while app loads -->
+    <div class="loading-container">
+      <img src="/icon-192.png" alt="ThalassCare AI" class="loading-logo">
+      <div class="loading-text">ThalassCare AI</div>
+      <div class="loading-subtext">Loading your health companion...</div>
+      <div class="loading-spinner"></div>
+    </div>
+  </div>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('ServiceWorker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('ServiceWorker registration failed:', error);
+          });
+      });
+    }
+
+    // Handle iOS standalone mode
+    if (window.navigator.standalone === true) {
+      document.documentElement.classList.add('ios-standalone');
+    }
+
+    // Prevent pull-to-refresh on mobile
+    document.body.addEventListener('touchmove', function(e) {
+      if (e.target.closest('.scrollable')) return;
+      e.preventDefault();
+    }, { passive: false });
+  </script>
+</body>
+</html>

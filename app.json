@@ -1,34 +1,59 @@
 {
   "expo": {
-    "name": "Thalassemia AI Care",
-    "slug": "thalassemia-ai-care", 
+    "name": "ThalassCare AI",
+    "slug": "thalasscare-ai",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "thalassemia-care",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/android/play_store_512.png",
+    "scheme": "thalasscare",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/android/play_store_512.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#14B8A6"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.thalasscare.ai",
+      "icon": "./assets/ios/AppIcon~ios-marketing.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android/res/mipmap-xxxhdpi/ic_launcher_foreground.png",
+        "backgroundImage": "./assets/android/res/mipmap-xxxhdpi/ic_launcher_background.png",
+        "monochromeImage": "./assets/android/res/mipmap-xxxhdpi/ic_launcher_monochrome.png"
+      },
+      "package": "com.thalasscare.ai"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png",
-      "manifest": {
-        "name": "Thalassemia AI Care",
-        "short_name": "Thal Care",
-        "description": "AI-powered thalassemia management and monitoring",
-        "background_color": "#ffffff",
-        "theme_color": "#2563EB",
-        "display": "standalone",
-        "start_url": "/",
-        "orientation": "portrait"
-      }
+      "favicon": "./assets/web/favicon.ico",
+      "name": "ThalassCare AI",
+      "shortName": "ThalassCare",
+      "description": "AI-powered thalassemia care management for patients",
+      "lang": "en",
+      "themeColor": "#14B8A6",
+      "backgroundColor": "#F8FAFC",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "scope": "/",
+      "preferRelatedApplications": false
     },
-    "plugins": ["expo-router", "expo-font", "expo-web-browser"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-web-browser"
+    ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "thalasscare-ai"
+      }
     }
   }
 }
