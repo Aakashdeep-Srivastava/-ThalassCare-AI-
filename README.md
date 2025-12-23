@@ -4,13 +4,13 @@
 
 A comprehensive mobile health application designed to revolutionize care management for thalassemia patients through intelligent tracking, predictive analytics, and seamless healthcare coordination.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-ThalassCare%20AI-14B8A6?style=for-the-badge&logo=vercel)](https://thalasscare-ai-skydeeps-projects.vercel.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-ThalassCare%20AI-14B8A6?style=for-the-badge&logo=vercel)](https://dist-roan-three.vercel.app)
 [![React Native](https://img.shields.io/badge/React%20Native-Expo-000020?style=for-the-badge&logo=expo)](https://expo.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
 
 ## Live Demo
 
-**Try the app now:** [https://thalasscare-ai-skydeeps-projects.vercel.app](https://thalasscare-ai-skydeeps-projects.vercel.app)
+**Try the app now:** [https://dist-roan-three.vercel.app](https://dist-roan-three.vercel.app)
 
 **Demo Credentials:**
 - Username: `Arav`
